@@ -184,16 +184,19 @@ class TaskController extends Controller
                 $deleteTask = TaskModel::find($id);
                 $deleteTask->is_deleted = true;
                 $deleteTask->update();
+                return response()->json([
+                    'message' => "Task Moved to Trash!",
+                    'requestType' => $requestType
+                ], 200);
             }
             if($requestType == "DELETE"){
                 $deleteTask = TaskModel::find($id);
                 $deleteTask->delete();
+                return response()->json([
+                    'message' => "Task Deleted Permanently",
+                    'requestType' => $requestType
+                ], 200);
             }
-
-            return response()->json([
-                'message' => "Task Moved to Trash!",
-                'requestType' => $requestType
-            ], 200);
         }catch(Exception $e){
             return response()->json([
                 'message' => "Something went really wrong!"
