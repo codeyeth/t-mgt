@@ -9,12 +9,21 @@ const Login = () => {
   const { http, setToken } = AuthUser();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loginError, setLoginError] = useState(null);
 
   const submitForm = () => {
     // api call
-    http.post("/login", { email: email, password: password }).then((res) => {
-      setToken(res.data.user, res.data.access_token);
-    });
+    http
+      .post("/login", { email: email, password: password })
+      .then((res) => {
+        setToken(res.data.user, res.data.access_token);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status) {
+          setLoginError("Invalid Credentials");
+        }
+      });
   };
 
   return (
@@ -26,6 +35,11 @@ const Login = () => {
             <Divider orientation="center" orientationMargin="0">
               LOGIN FORM
             </Divider>
+            {loginError && (
+              <div style={{ marginBottom: "10px" }}>
+                <Text type="danger">{loginError}</Text>
+              </div>
+            )}
             <Input size="medium" type="email" id="email" required placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
             <br />
             <br />
@@ -33,7 +47,7 @@ const Login = () => {
             <br />
             <br />
             <Button size="medium" block type="primary" htmlType="submit">
-              Login
+              Proceed
             </Button>
           </Col>
           <Col flex="3"></Col>
