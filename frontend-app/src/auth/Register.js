@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthUser from "./AuthUser";
 
-import { Divider, Row, Col, Spin, Typography, Form, Button, Space, Input, Radio, message, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-const { Text, Title } = Typography;
+import { Divider, Row, Col, Form, Button, Input, message } from "antd";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -13,15 +11,41 @@ const Register = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const successMessage = (message) => {
+    messageApi.open({
+      type: "success",
+      content: message,
+    });
+  };
+
+  const errorMessage = (message) => {
+    messageApi.open({
+      type: "error",
+      content: message,
+    });
+  };
+
   const submitForm = () => {
     // api call
-    http.post("/register", { email: email, password: password, name: name }).then((res) => {
-      navigate("/login");
-    });
+    http
+      .post("/register", { email: email, password: password, name: name })
+      .then((res) => {
+        successMessage("Registered Successfully. Redirecting you to Login.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.log(err);
+        errorMessage("Error occured.");
+      });
   };
 
   return (
     <div className="row justify-content-left pt-5">
+      {contextHolder}
       <Form onFinish={submitForm} style={{ marginTop: "0px", textAlign: "center" }}>
         <Row>
           <Col flex="3"></Col>
@@ -44,8 +68,6 @@ const Register = () => {
           </Col>
           <Col flex="3"></Col>
         </Row>
-
-        <div style={{ width: "50%" }}></div>
       </Form>
     </div>
   );
